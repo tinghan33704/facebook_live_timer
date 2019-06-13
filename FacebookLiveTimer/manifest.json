@@ -1,0 +1,35 @@
+﻿{
+    "name": "FacebookLiveTimer",
+    "version": "1.0",
+    "author": "蒼曜(tinghan33704)",
+    "description": "定時自動開啟指定專頁的直播",
+    "permissions": ["http://*.google.com.tw/", "https://*.google.com.tw/", "tabs", "activeTab", "declarativeContent", "storage", "webNavigation"],
+    "background": {
+      "scripts": ["background.js"],
+      "persistent": false
+    },
+    "content_scripts": [
+        {
+         "matches": ["http://*/*", "https://*/*"],
+         "run_at": "document_start",
+         "css": [],
+         "js": ["content_script.js", "jquery.min.js"]
+        }
+    ],
+    "browser_action": {
+      "default_popup": "popup.html",
+      "default_icon": {
+        "16": "images/FacebookLiveTimer.png",
+        "32": "images/FacebookLiveTimer.png",
+        "48": "images/FacebookLiveTimer.png",
+        "128": "images/FacebookLiveTimer.png"
+      }
+    },
+    "icons": {
+      "16": "images/FacebookLiveTimer.png",
+      "32": "images/FacebookLiveTimer.png",
+      "48": "images/FacebookLiveTimer.png",
+      "128": "images/FacebookLiveTimer.png"
+    },
+    "manifest_version": 2
+  }
