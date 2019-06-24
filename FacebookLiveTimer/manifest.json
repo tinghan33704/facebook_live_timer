@@ -5,8 +5,8 @@
     "description": "定時自動開啟指定專頁的直播",
     "permissions": ["http://*.google.com.tw/", "https://*.google.com.tw/", "tabs", "activeTab", "declarativeContent", "storage", "webNavigation"],
     "background": {
-      "scripts": ["background.js"],
-      "persistent": false
+      "scripts": ["jquery.min.js", "background.js"],
+      "persistent": true
     },
     "content_scripts": [
         {

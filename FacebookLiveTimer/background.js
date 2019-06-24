@@ -1,11 +1,5 @@
 var interval_id;
-var timer = [
-{'id': 0, 'url': '', 'time': -1},
-{'id': 1, 'url': '', 'time': -1},
-{'id': 2, 'url': '', 'time': -1},
-{'id': 3, 'url': '', 'time': -1},
-{'id': 4, 'url': '', 'time': -1},
-];
+var timer = [];
 var open_tab = [];
 var video_tab = [];
 var live_tab = [];
@@ -15,13 +9,19 @@ interval_id = setInterval(function(){
     //console.log('check');
 },10000);
 
+$(document).ready(function(){
+    chrome.storage.sync.get(['timer'], function(items) {
+        timer = items.timer;
+    });
+});
+
 function checkTimerExpired()
 {
     for(let i=0; i<5; i++)
     {
         if(timer[i].time >= 0 && Date.now() > timer[i].time)
         {
-            console.log(timer[i].id+ ' expired');
+            //console.log(timer[i].id+ ' expired');
             openTab(i);
             deleteTimer(i);
         }
@@ -41,6 +41,8 @@ function deleteTimer(id)
     timer[id].url = '';
     timer[id].time = -1;
     
+    chrome.storage.sync.set({timer: timer}, function() {});
+    
     console.log('[FacebookLiveTimer] Delete timer '+(id+1));
 }
 
@@ -48,6 +50,8 @@ function setTimer(id, url, time)
 {
     timer[id].url = url;
     timer[id].time = time;
+    
+    chrome.storage.sync.set({timer: timer}, function() {});
     
     console.log('[FacebookLiveTimer] Set timer '+(id+1)+' to '+new Date(time).toString()+' with url '+url);
 }
@@ -64,7 +68,7 @@ function openTab(id)
 chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
     if(msg.action == 'getTimerData')
     {
-        chrome.runtime.sendMessage({action: "showTimerData", data: timer}, function(response) {});
+        chrome.runtime.sendMessage({action: "showTimerData", data: timer});
     }
     else if(msg.action == 'setTimerData')
     {
@@ -73,7 +77,7 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
     else if(msg.action == 'deleteTimerData')
     {
         deleteTimer(msg.index);
-        chrome.runtime.sendMessage({action: "showTimerData", data: timer}, function(response) {});
+        chrome.runtime.sendMessage({action: "showTimerData", data: timer});
     }
     else if(msg.action == 'liveTagFound')
     {
@@ -96,7 +100,15 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
 
 
 chrome.runtime.onInstalled.addListener(function() {
-    
+    var timer_array = [
+        {'id': 0, 'url': '', 'time': -1},
+        {'id': 1, 'url': '', 'time': -1},
+        {'id': 2, 'url': '', 'time': -1},
+        {'id': 3, 'url': '', 'time': -1},
+        {'id': 4, 'url': '', 'time': -1},
+    ];
+    chrome.storage.sync.set({timer: timer_array}, function() {});
+    timer = timer_array;
 });
 
 chrome.tabs.onRemoved.addListener(function(tab_id, removed) {
