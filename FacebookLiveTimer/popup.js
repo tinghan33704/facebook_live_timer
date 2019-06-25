@@ -66,8 +66,11 @@ function editTimer(event)
         var now = new Date();
         now.setTime(now.getTime()-now.getTimezoneOffset()*60*1000);
         
+        var data_time = new Date(time_arr[event.data.id]);
+        data_time.setTime(data_time.getTime()-data_time.getTimezoneOffset()*60*1000);
+        
         var pre_url = ($("#url_"+event.data.id).html() == '---')?'':$("#url_"+event.data.id).html();
-        var time = (time_arr[event.data.id] > -1)?(new Date(time_arr[event.data.id])).toISOString().slice(0, 16):now.toISOString().slice(0, 16);
+        var time = (time_arr[event.data.id] > -1)?data_time.toISOString().slice(0, 16):now.toISOString().slice(0, 16);
         $("#time_"+event.data.id).html('<input type="datetime-local" value="'+time+'"></input>');
         $("#url_"+event.data.id).html('<input type="text" value="'+pre_url+'"></input>');
     }
@@ -82,6 +85,7 @@ function saveData(event)
     time = time_a[0]+':'+time_a[1];
     var url = $("#url_"+event.data.id+" input").val();
     
+    
     $("#edit_"+event.data.id).off('click', saveData).on('click', {id: event.data.id}, editTimer);
     $("#edit_"+event.data.id).html('<i class="fa fa-edit"></i>');
     
@@ -89,6 +93,8 @@ function saveData(event)
     {    
         $("#time_"+event.data.id).html(time);
         $("#url_"+event.data.id).html(url);
+        
+        time_arr[event.data.id] = time_milli;
         
         chrome.runtime.sendMessage({action: "setTimerData", id: event.data.id, time: time_milli, url: url}, function(){});
     }
