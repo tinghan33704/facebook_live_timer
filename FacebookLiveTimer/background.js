@@ -10,9 +10,12 @@ interval_id = setInterval(function(){
 },10000);
 
 $(document).ready(function(){
-    chrome.storage.sync.get(['timer'], function(items) {
-        timer = items.timer;
-    });
+    if(timer.length == 0)
+    {
+        chrome.storage.sync.get(['timer'], function(items) {
+            timer = items.timer;
+        });
+    }
 });
 
 function checkTimerExpired()
@@ -107,8 +110,10 @@ chrome.runtime.onInstalled.addListener(function() {
         {'id': 3, 'url': '', 'time': -1},
         {'id': 4, 'url': '', 'time': -1},
     ];
-    chrome.storage.sync.set({timer: timer_array}, function() {});
-    timer = timer_array;
+    chrome.storage.sync.set({timer: timer_array}, function() {
+        timer = timer_array;
+    });
+    
 });
 
 chrome.tabs.onRemoved.addListener(function(tab_id, removed) {
