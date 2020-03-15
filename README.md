@@ -1,4 +1,4 @@
-# facebook_live_timer
+# facebook_live_timer (ver. 1.0.3)
 定時自動開啟指定專頁的直播
 
 ## 適用環境

@@ -11,6 +11,7 @@ function checkLiveTag()         // 第一階段：連結至指定專頁，開始
     {
         if(live_tag.length > 0)
         {
+            console.log('[FacebookLiveTimer] Find stream, try to connect...');
             live_tag.click();
             chrome.runtime.sendMessage({action: 'liveTagFound'});
         }
@@ -21,26 +22,21 @@ function checkLiveTag()         // 第一階段：連結至指定專頁，開始
 
 function checkFirstVideo()      // 第二階段：直播的標籤存在後連結至專頁影片頁面，搜尋第一支影片(理論上都會是直播)
 {
-    var live_video_1 = $("._2wrk").closest("._5asl").children('a').attr('href');
-    var live_video_2 = $("._2t3c").children('span').attr('href');
+    var live_video = $("span:contains('所有影片')").parent().parent().find(".hcukyx3x");
     
-    if(live_video_1)
+    if(live_video.length > 0)
     {
-        if(live_video_1.length > 0)
+        /*
+        if(live_video.length > 0)
         {
-            location.href = live_video_1;
+            location.href = live_video;
             chrome.runtime.sendMessage({action: 'liveVideoFound'});
         }
         else location.reload();
-    }
-    else if(live_video_2)
-    {
-        if(live_video_2.length > 0)
-        {
-            location.href = live_video_2;
-            chrome.runtime.sendMessage({action: 'liveVideoFound'});
-        }
-        else location.reload();
+        */
+        console.log('[FacebookLiveTimer] Find video, try to connect...');
+        chrome.runtime.sendMessage({action: 'liveVideoFound'});
+        live_video.find(".kfpcsd3p").find("._28__").click();
     }
     else location.reload();
 }
