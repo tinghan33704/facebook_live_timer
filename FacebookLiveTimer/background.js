@@ -3,6 +3,7 @@ var timer = [];
 var open_tab = [];
 var video_tab = [];
 var live_tab = [];
+var finish_tab = [];
 
 interval_id = setInterval(function(){
     checkTimerExpired();
@@ -35,7 +36,11 @@ function checkTimerExpired()
     });
     
     video_tab.forEach(function(element){
-        chrome.tabs.sendMessage(element, {action: 'checkFirstVideo'});
+        chrome.tabs.sendMessage(element, {action: 'clickVideo'});
+    });
+    
+    live_tab.forEach(function(element){
+        chrome.tabs.sendMessage(element, {action: 'reloadVideo'});
     });
 }
 
@@ -61,10 +66,11 @@ function setTimer(id, url, time)
 
 function openTab(id)
 {
-    chrome.tabs.create({url: timer[id].url}, function(newTab){
+    let live_url = timer[id].url + (timer[id].url[timer[id].url.length - 1] === '/' ? '' : '/') + 'live_videos/'
+    chrome.tabs.create({url: live_url}, function(newTab){
         open_tab.push(newTab.id);
     });
-    console.log('[FacebookLiveTimer] Open new tab with url '+timer[id].url);
+    console.log('[FacebookLiveTimer] Open new tab with url '+live_url);
 }
 
 
@@ -98,6 +104,14 @@ chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
         
         live_tab.push(tab_id);
     }
+    else if(msg.action == 'liveVideoReload')
+    {
+        var tab_id = sender.tab.id;
+        var index = live_tab.indexOf(tab_id);
+        if(index !== -1) live_tab.splice(index, 1);
+        
+        finish_tab.push(tab_id);
+    }
     return true;
 });
 
@@ -124,7 +138,10 @@ chrome.tabs.onRemoved.addListener(function(tab_id, removed) {
     if(index !== -1) video_tab.splice(index, 1);
     
     index = video_tab.indexOf(tab_id);
-    if(index !== -1) video_tab.splice(index, 1);
+    if(index !== -1) live_tab.splice(index, 1);
+    
+    index = video_tab.indexOf(tab_id);
+    if(index !== -1) finish_tab.splice(index, 1);
 })
 
 /*
